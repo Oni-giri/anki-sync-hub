@@ -38,6 +38,14 @@ def test_first_run_login_and_sync_user(tmp_path: Path) -> None:
         assert created.status_code == 201
         assert created.json()["username"] == "alice@example.com"
 
+        duplicate = client.post(
+            "/api/sync-users",
+            headers=origin,
+            json={"username": "alice@example.com", "password": "another long password"},
+        )
+        assert duplicate.status_code == 409
+        assert duplicate.json() == {"detail": "That sync username already exists."}
+
         token = client.post(
             "/api/mcp-tokens",
             headers=origin,
@@ -177,6 +185,7 @@ def test_original_icon_is_served_as_svg(tmp_path: Path) -> None:
 
     assert page.status_code == 200
     assert 'rel="icon" href="/assets/icon.svg"' in page.text
+    assert 'id="sync-user-message"' in page.text
     assert icon.status_code == 200
     assert icon.headers["content-type"].startswith("image/svg+xml")
     assert "Anki Sync Hub" in icon.text

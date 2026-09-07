@@ -4,12 +4,19 @@ const views = {
   dashboard: document.querySelector("#dashboard-view"),
 };
 const message = document.querySelector("#message");
+const syncUserForm = document.querySelector("#sync-user-form");
+const syncUserMessage = document.querySelector("#sync-user-message");
 
 function show(name) {
   Object.entries(views).forEach(([key, view]) => view.classList.toggle("hidden", key !== name));
 }
 
 function say(text = "") { message.textContent = text; }
+
+function saySyncUser(text = "", tone = "error") {
+  syncUserMessage.textContent = text;
+  syncUserMessage.className = `form-message ${tone}`;
+}
 
 async function api(path, options = {}) {
   const response = await fetch(path, {
@@ -152,14 +159,32 @@ document.querySelector("#login-form").addEventListener("submit", async (event) =
   catch (error) { say(error.message); }
 });
 
-document.querySelector("#sync-user-form").addEventListener("submit", async (event) => {
-  event.preventDefault(); say("Creating sync account…");
-  const data = Object.fromEntries(new FormData(event.currentTarget));
+syncUserForm.addEventListener("input", () => saySyncUser());
+syncUserForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  if (form.dataset.submitting === "true") return;
+  form.dataset.submitting = "true";
+  const submit = form.querySelector('button[type="submit"]');
+  submit.disabled = true;
+  saySyncUser("Creating sync account…", "progress");
+  const data = Object.fromEntries(new FormData(form));
   try {
-    await api("/api/sync-users", { method: "POST", body: JSON.stringify(data) });
-    event.currentTarget.reset();
+    const user = await api("/api/sync-users", { method: "POST", body: JSON.stringify(data) });
+    form.reset();
     await loadDashboard();
-  } catch (error) { say(error.message); }
+    saySyncUser(`Sync account “${user.username}” created.`, "success");
+  } catch (error) {
+    if (error.status === 409) {
+      await loadDashboard();
+      saySyncUser("That sync username already exists. It is listed in Sync accounts above.");
+    } else {
+      saySyncUser(error.message);
+    }
+  } finally {
+    delete form.dataset.submitting;
+    submit.disabled = false;
+  }
 });
 
 document.querySelector("#mcp-token-form").addEventListener("submit", async (event) => {

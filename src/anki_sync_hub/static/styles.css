@@ -492,6 +492,26 @@ button.text-button {
   font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
 }
 
+.form-message {
+  margin: 0;
+  border-left: 3px solid var(--danger);
+  padding: 12px 16px;
+  background: var(--layer-02);
+  font-size: 0.75rem;
+}
+
+.form-message:empty {
+  display: none;
+}
+
+.form-message.progress {
+  border-left-color: var(--interactive);
+}
+
+.form-message.success {
+  border-left-color: var(--positive);
+}
+
 .dashboard-footer {
   display: flex;
   align-items: center;
