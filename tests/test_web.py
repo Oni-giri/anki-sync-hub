@@ -76,3 +76,85 @@ def test_admin_api_rejects_cross_origin_request(tmp_path: Path) -> None:
             json={"username": "owner", "password": "correct horse battery staple"},
         )
     assert response.status_code == 403
+
+
+def test_admin_credentials_bootstrap_owner_and_are_not_reapplied(tmp_path: Path) -> None:
+    settings = Settings(
+        data_dir=tmp_path,
+        listen_host="127.0.0.1",
+        listen_port=8080,
+        sync_internal_url="http://127.0.0.1:9",
+        session_ttl_seconds=3600,
+        cookie_secure=False,
+        admin_username="admin",
+        admin_password="umbrel-generated-password",
+    )
+    app = create_app(settings)
+    origin = {"Origin": "http://testserver"}
+
+    with TestClient(app) as client:
+        assert client.get("/api/setup/status").json() == {"configured": True}
+        assert (
+            client.post(
+                "/api/setup",
+                headers=origin,
+                json={"username": "other", "password": "another long password"},
+            ).status_code
+            == 409
+        )
+        assert (
+            client.post(
+                "/api/login",
+                headers=origin,
+                json={"username": "admin", "password": "umbrel-generated-password"},
+            ).status_code
+            == 200
+        )
+
+    changed_settings = Settings(
+        data_dir=tmp_path,
+        listen_host="127.0.0.1",
+        listen_port=8080,
+        sync_internal_url="http://127.0.0.1:9",
+        session_ttl_seconds=3600,
+        cookie_secure=False,
+        admin_username="admin",
+        admin_password="a-different-generated-password",
+    )
+    restarted_app = create_app(changed_settings)
+    with TestClient(restarted_app) as client:
+        assert (
+            client.post(
+                "/api/login",
+                headers=origin,
+                json={"username": "admin", "password": "umbrel-generated-password"},
+            ).status_code
+            == 200
+        )
+        assert (
+            client.post(
+                "/api/login",
+                headers=origin,
+                json={"username": "admin", "password": "a-different-generated-password"},
+            ).status_code
+            == 401
+        )
+
+
+def test_partial_admin_bootstrap_configuration_fails(tmp_path: Path) -> None:
+    settings = Settings(
+        data_dir=tmp_path,
+        listen_host="127.0.0.1",
+        listen_port=8080,
+        sync_internal_url="http://127.0.0.1:9",
+        session_ttl_seconds=3600,
+        cookie_secure=False,
+        admin_username="admin",
+    )
+
+    try:
+        create_app(settings)
+    except RuntimeError as error:
+        assert "must be set together" in str(error)
+    else:
+        raise AssertionError("Partial administrator bootstrap must fail closed.")

@@ -21,6 +21,8 @@ published.
 
 - MCP tokens are displayed once and stored only as SHA-256 hashes.
 - Owner passwords use salted scrypt hashes.
+- Umbrel's generated app password is passed only to the web service and is
+  hashed into the database when the owner is created on first start.
 - Sync passwords use salted PBKDF2 PHC hashes compatible with Anki's official
   sync server.
 - Request bodies and card content are not recorded in proxy metrics.

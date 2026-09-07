@@ -6,16 +6,18 @@ or a private Tailscale network.
 
 The project is under active development. The first milestone provides:
 
-- browser-based first-run setup and sync-user management;
+- automatic Umbrel administrator provisioning and browser-based sync-user management;
 - Anki's official, version-matched sync implementation;
 - a same-origin gateway for `/sync/*` and `/msync/*`;
 - basic health, storage, and request metrics;
 - persistent configuration and collection storage;
 - an MCP endpoint whose deck operations use a separate headless Anki client.
 
-No user-specific values are built into the image. Accounts, sync credentials,
-and MCP tokens are created in the browser and stored in the mounted data
-directory.
+No user-specific values are built into the image. On Umbrel, the platform's
+generated app password provisions the `admin` owner on first start and appears
+in Umbrel's standard credentials dialog. Portable Docker installs retain the
+browser-based owner setup. Sync credentials and MCP tokens are managed in the
+browser and stored in the mounted data directory.
 
 ## Development status
 
@@ -45,7 +47,9 @@ docker compose up --build
 ```
 
 Then open `http://localhost:8080`. Create an owner and a sync account in the
-browser. Configure Anki's self-hosted sync server as
+browser. To provision the owner non-interactively, set both
+`ANKI_HUB_ADMIN_USERNAME` and `ANKI_HUB_ADMIN_PASSWORD` on the `web` service.
+Configure Anki's self-hosted sync server as
 `http://localhost:8080/`.
 
 For MCP, create a token in the UI and connect a Streamable HTTP client to

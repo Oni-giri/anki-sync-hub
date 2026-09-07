@@ -42,7 +42,8 @@ using SSH.
 
 - Initialize the Python package and repository hygiene.
 - Add an idempotent SQLite migration layer.
-- Add first-run owner creation, login, logout, and session expiry.
+- Add first-run owner creation, optional Umbrel credential provisioning, login,
+  logout, and session expiry.
 - Add sync-user create/list/disable/password-reset operations.
 - Store owner passwords with scrypt and sync passwords as PBKDF2 PHC hashes
   accepted by the official server.
@@ -51,7 +52,8 @@ using SSH.
 Acceptance:
 
 - Fresh startup reaches an actionable setup page.
-- No credentials are present in the image, Dockerfile, or Compose file.
+- No plaintext generated password is present in the image, Dockerfile, or
+  Compose file; Umbrel injects its per-app password at runtime.
 - Authentication and database unit tests pass.
 
 ## Milestone 2: sync runtime and observability

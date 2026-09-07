@@ -45,11 +45,35 @@ def _directory_size(path: Path) -> int:
     return sum(item.stat().st_size for item in path.rglob("*") if item.is_file())
 
 
+def _bootstrap_owner(database: Database, settings: Settings) -> None:
+    username = settings.admin_username
+    password = settings.admin_password
+    if (username is None) != (password is None):
+        raise RuntimeError(
+            "ANKI_HUB_ADMIN_USERNAME and ANKI_HUB_ADMIN_PASSWORD must be set together."
+        )
+    if username is None or database.owner_exists():
+        return
+
+    username = username.strip()
+    if not username or len(username) > 128:
+        raise RuntimeError("ANKI_HUB_ADMIN_USERNAME must contain 1-128 characters.")
+    try:
+        password_hash = hash_owner_password(password)
+        database.create_owner(username, password_hash)
+    except ValueError as error:
+        raise RuntimeError(f"Invalid bootstrap administrator credentials: {error}") from error
+    except sqlite3.IntegrityError:
+        # Another web process may have completed first-run initialization.
+        pass
+
+
 def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or Settings.from_env()
     settings.ensure_directories()
     database = Database(settings.database_path)
     database.migrate()
+    _bootstrap_owner(database, settings)
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):

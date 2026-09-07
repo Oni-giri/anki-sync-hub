@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 
@@ -15,6 +15,8 @@ class Settings:
     cookie_secure: bool
     mcp_internal_url: str = "http://mcp:8082"
     mcp_port: int = 8082
+    admin_username: str | None = None
+    admin_password: str | None = field(default=None, repr=False)
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -31,6 +33,8 @@ class Settings:
             in {"1", "true", "yes"},
             mcp_internal_url=os.environ.get("ANKI_HUB_MCP_URL", "http://mcp:8082").rstrip("/"),
             mcp_port=int(os.environ.get("ANKI_HUB_MCP_PORT", "8082")),
+            admin_username=os.environ.get("ANKI_HUB_ADMIN_USERNAME"),
+            admin_password=os.environ.get("ANKI_HUB_ADMIN_PASSWORD"),
         )
 
     @property
