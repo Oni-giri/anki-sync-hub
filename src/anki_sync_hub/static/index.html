@@ -93,13 +93,15 @@
               <h2>MCP tokens</h2>
               <p>Create a scoped token for one sync account. The full token is shown once.</p>
             </div>
-            <button id="open-mcp-guide" class="secondary" type="button">Connection guide <span aria-hidden="true">→</span></button>
           </div>
           <form id="mcp-token-form" class="token-form">
-            <label><span>Sync account</span><select id="token-user" name="sync_user_id" required></select></label>
-            <label><span>Token name</span><input name="name" placeholder="My local agent" required></label>
-            <label class="check"><input name="write" type="checkbox" checked> Allow writes</label>
-            <button type="submit">Create token <span aria-hidden="true">＋</span></button>
+            <label class="token-account"><span>Sync account</span><select id="token-user" name="sync_user_id" required></select></label>
+            <label class="token-name"><span>Token name</span><input name="name" placeholder="My local agent" required></label>
+            <label class="check"><input name="write" type="checkbox" checked><span>Allow writes</span></label>
+            <div class="token-actions">
+              <button id="open-mcp-guide" class="secondary" type="button">Connection guide <span aria-hidden="true">→</span></button>
+              <button class="token-submit" type="submit">Create token <span aria-hidden="true">＋</span></button>
+            </div>
           </form>
           <div id="token-result" class="token-result hidden"></div>
           <div id="tokens" class="user-list"></div>

@@ -65,6 +65,7 @@ async function copyText(value) {
 function openMcpGuide() {
   updateMcpGuide();
   sayMcpGuide();
+  if (mcpGuide.open) return;
   document.body.classList.add("drawer-open");
   if (typeof mcpGuide.showModal === "function") mcpGuide.showModal();
   else mcpGuide.setAttribute("open", "");
@@ -251,12 +252,13 @@ syncUserForm.addEventListener("submit", async (event) => {
 
 mcpTokenForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+  const tokenForm = event.currentTarget;
   if (mcpTokenForm.dataset.submitting === "true") return;
   mcpTokenForm.dataset.submitting = "true";
   const submit = mcpTokenForm.querySelector('button[type="submit"]');
   submit.disabled = true;
   say("Creating MCP token…");
-  const form = new FormData(event.currentTarget);
+  const form = new FormData(tokenForm);
   const scopes = ["read"];
   if (form.get("write")) scopes.push("write");
   try {
@@ -291,8 +293,9 @@ mcpTokenForm.addEventListener("submit", async (event) => {
     output.append(code, actions);
     latestMcpToken = result.token;
     updateMcpGuide();
-    event.currentTarget.reset();
+    tokenForm.reset();
     await loadDashboard();
+    openMcpGuide();
   } catch (error) { say(error.message); }
   finally {
     delete mcpTokenForm.dataset.submitting;
