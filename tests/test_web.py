@@ -186,6 +186,9 @@ def test_original_icon_is_served_as_svg(tmp_path: Path) -> None:
     assert page.status_code == 200
     assert 'rel="icon" href="/assets/icon.svg"' in page.text
     assert 'id="sync-user-message"' in page.text
+    assert 'id="mcp-guide"' in page.text
+    assert "Streamable HTTP endpoint" in page.text
+    assert "Authorization header" in page.text
     assert icon.status_code == 200
     assert icon.headers["content-type"].startswith("image/svg+xml")
     assert "Anki Sync Hub" in icon.text

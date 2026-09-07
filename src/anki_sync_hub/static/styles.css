@@ -72,6 +72,10 @@ body::before {
   content: "";
 }
 
+body.drawer-open {
+  overflow: hidden;
+}
+
 button,
 input,
 select {
@@ -457,6 +461,14 @@ button.text-button {
   margin-top: 24px;
 }
 
+.mcp-heading > div {
+  max-width: 680px;
+}
+
+.mcp-heading p {
+  margin-bottom: 0;
+}
+
 .token-form {
   display: grid;
   grid-template-columns: minmax(160px, 1fr) minmax(180px, 1.4fr) auto auto;
@@ -492,6 +504,17 @@ button.text-button {
   font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
 }
 
+.token-result > code {
+  display: block;
+  margin: 12px 0 16px;
+}
+
+.token-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .form-message {
   margin: 0;
   border-left: 3px solid var(--danger);
@@ -510,6 +533,183 @@ button.text-button {
 
 .form-message.success {
   border-left-color: var(--positive);
+}
+
+.drawer {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: min(620px, 100vw);
+  max-width: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0 0 0 auto;
+  border: 0;
+  border-left: 1px solid var(--border-strong);
+  padding: 0;
+  overflow: hidden;
+  color: var(--text-primary);
+  background: var(--layer-01);
+  box-shadow: -24px 0 64px rgba(0, 0, 0, 0.28);
+}
+
+.drawer[open] {
+  animation: drawer-in 180ms ease-out;
+}
+
+.drawer::backdrop {
+  background: rgba(0, 0, 0, 0.58);
+}
+
+.drawer-shell {
+  height: 100%;
+  padding: 32px;
+  overflow-y: auto;
+}
+
+.drawer-header,
+.config-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.drawer-header {
+  margin-bottom: 40px;
+  border-bottom: 1px solid var(--border-strong);
+  padding-bottom: 24px;
+}
+
+.drawer-header .panel-index {
+  margin-bottom: 12px;
+}
+
+.drawer h2,
+.drawer h3 {
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: -0.035em;
+}
+
+.drawer h2 {
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+}
+
+.drawer h3 {
+  font-size: 1.25rem;
+}
+
+.guide-steps {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: guide-step;
+}
+
+.guide-steps li {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 4px 16px;
+  border-top: 1px solid var(--border-subtle);
+  padding: 18px 0;
+  counter-increment: guide-step;
+}
+
+.guide-steps li::before {
+  grid-row: 1 / span 2;
+  color: var(--interactive);
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.75rem;
+  content: "0" counter(guide-step);
+}
+
+.guide-steps strong {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.guide-steps span,
+.drawer-note {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  line-height: 1.55;
+}
+
+.connection-section {
+  margin-top: 40px;
+  border-top: 1px solid var(--border-strong);
+  padding-top: 24px;
+}
+
+.connection-label {
+  margin: 20px 0 8px;
+  color: var(--text-secondary);
+}
+
+.drawer-copy-row {
+  overflow: hidden;
+}
+
+.drawer-copy-row code {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.drawer-note {
+  margin: 12px 0 0;
+}
+
+.drawer-note code {
+  color: var(--text-primary);
+}
+
+.config-heading {
+  align-items: flex-end;
+  margin-bottom: 16px;
+}
+
+.config-heading .step {
+  margin-bottom: 6px;
+}
+
+.config-block {
+  margin: 0;
+  padding: 18px;
+  overflow-x: auto;
+  color: var(--text-primary);
+  background: var(--layer-02);
+  font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.6875rem;
+  line-height: 1.55;
+}
+
+.tool-grid {
+  display: grid;
+  grid-template-columns: minmax(110px, auto) minmax(0, 1fr);
+  margin-top: 16px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.tool-grid > * {
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 12px 8px 12px 0;
+}
+
+.tool-grid code {
+  color: var(--interactive);
+  font-size: 0.75rem;
+}
+
+.tool-grid span {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+@keyframes drawer-in {
+  from {
+    transform: translateX(100%);
+  }
 }
 
 .dashboard-footer {
@@ -655,6 +855,23 @@ hr {
   .copy-row button {
     min-width: 84px;
   }
+
+  .drawer-shell {
+    padding: 24px;
+  }
+
+  .drawer-header {
+    gap: 16px;
+  }
+
+  .config-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .config-heading button {
+    align-self: stretch;
+  }
 }
 
 @media (max-width: 380px) {
@@ -677,6 +894,7 @@ hr {
   *::before,
   *::after {
     scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
 }
