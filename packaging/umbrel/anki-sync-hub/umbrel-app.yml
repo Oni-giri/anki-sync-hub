@@ -21,15 +21,15 @@ description: >-
   Anki is a registered trademark of Ankitects Pty Ltd. This project is not
   affiliated with or endorsed by Ankitects.
 releaseNotes: ""
-developer: Anki Sync Hub contributors
-website: https://github.com/ankicommunity/anki-sync-hub
+developer: Oni-giri
+website: https://github.com/Oni-giri/anki-sync-hub
 dependencies: []
-repo: https://github.com/ankicommunity/anki-sync-hub
-support: https://github.com/ankicommunity/anki-sync-hub/issues
+repo: https://github.com/Oni-giri/anki-sync-hub
+support: https://github.com/Oni-giri/anki-sync-hub/issues
 port: 8723
 gallery: []
 path: ""
 defaultUsername: ""
 defaultPassword: ""
-submitter: TO_BE_SET_BEFORE_SUBMISSION
+submitter: Oni-giri
 submission: https://github.com/getumbrel/umbrel-apps/pull/0000
