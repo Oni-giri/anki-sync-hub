@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "anki-sync-hub"
-version = "0.1.3"
+version = "0.1.4"
 description = "Browser and MCP control plane for Anki's official sync server"
 readme = "README.md"
 requires-python = ">=3.12"

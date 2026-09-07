@@ -110,26 +110,11 @@ select,
 }
 
 .mark {
-  display: grid;
+  display: block;
   flex: 0 0 auto;
-  grid-template-columns: 1fr 1fr;
   width: 64px;
   height: 64px;
-  color: var(--inverse);
-  background: var(--interactive);
-  font-size: 1.125rem;
-  font-weight: 600;
-  line-height: 1;
-}
-
-.mark span {
-  display: grid;
-  place-items: center;
-}
-
-.mark span:last-child {
-  color: var(--text-primary);
-  background: var(--layer-02);
+  object-fit: cover;
 }
 
 .masthead h1 {

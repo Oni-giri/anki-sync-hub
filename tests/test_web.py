@@ -158,3 +158,25 @@ def test_partial_admin_bootstrap_configuration_fails(tmp_path: Path) -> None:
         assert "must be set together" in str(error)
     else:
         raise AssertionError("Partial administrator bootstrap must fail closed.")
+
+
+def test_original_icon_is_served_as_svg(tmp_path: Path) -> None:
+    settings = Settings(
+        data_dir=tmp_path,
+        listen_host="127.0.0.1",
+        listen_port=8080,
+        sync_internal_url="http://127.0.0.1:9",
+        session_ttl_seconds=3600,
+        cookie_secure=False,
+    )
+    app = create_app(settings)
+
+    with TestClient(app) as client:
+        page = client.get("/")
+        icon = client.get("/assets/icon.svg")
+
+    assert page.status_code == 200
+    assert 'rel="icon" href="/assets/icon.svg"' in page.text
+    assert icon.status_code == 200
+    assert icon.headers["content-type"].startswith("image/svg+xml")
+    assert "Anki Sync Hub" in icon.text

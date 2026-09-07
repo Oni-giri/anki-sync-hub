@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title">
+  <title id="title">Anki Sync Hub</title>
+  <rect width="256" height="256" fill="#0f62fe"/>
+  <path d="M64 0v256M128 0v256M192 0v256M0 64h256M0 128h256M0 192h256" stroke="#fff" stroke-opacity=".1"/>
+  <rect x="32" y="40" width="136" height="88" fill="#f4f4f4"/>
+  <path d="M56 76h68V60l28 24-28 24V92H56z" fill="#0f62fe"/>
+  <rect x="88" y="128" width="136" height="88" fill="#161616"/>
+  <path d="M200 164h-68v-16l-28 24 28 24v-16h68z" fill="#f4f4f4"/>
+</svg>

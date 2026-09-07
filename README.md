@@ -1,5 +1,7 @@
 # Anki Sync Hub
 
+<img src="assets/icon.svg" alt="Anki Sync Hub icon" width="96">
+
 Anki Sync Hub is a self-hosted control plane for Anki's official sync server.
 It is designed for a one-click Umbrel installation on a trusted local network
 or a private Tailscale network.
