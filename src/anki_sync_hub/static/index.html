@@ -11,61 +11,72 @@
   <body>
     <main class="shell">
       <header class="masthead">
-        <div class="mark" aria-hidden="true">A</div>
-        <div>
-          <p class="eyebrow">Private learning infrastructure</p>
-          <h1>Anki Sync Hub</h1>
+        <div class="brand-lockup">
+          <div class="mark" aria-hidden="true"><span>A</span><span>S</span></div>
+          <div>
+            <p class="eyebrow">Infrastructure / Learning systems</p>
+            <h1>Anki Sync Hub</h1>
+            <p class="descriptor">Private synchronization control plane</p>
+          </div>
         </div>
-        <span id="service-pill" class="pill neutral">Connecting</span>
+        <div class="status-block">
+          <span class="status-label">System state</span>
+          <span id="service-pill" class="pill neutral">Connecting</span>
+        </div>
       </header>
 
-      <section id="setup-view" class="card hidden">
+      <section id="setup-view" class="card auth-card hidden">
+        <p class="panel-index">01 / Initialize</p>
         <p class="step">First run</p>
         <h2>Create the owner account</h2>
-        <p>This protects server configuration. Your sync accounts are created next.</p>
+        <p class="lede">This protects server configuration. Your sync accounts are created next.</p>
         <form id="setup-form" class="form-stack">
-          <label>Owner username<input name="username" autocomplete="username" required></label>
-          <label>Password<input name="password" type="password" minlength="12" autocomplete="new-password" required></label>
-          <button type="submit">Initialize server</button>
+          <label><span>Owner username</span><input name="username" autocomplete="username" required></label>
+          <label><span>Password</span><input name="password" type="password" minlength="12" autocomplete="new-password" required><small>Minimum 12 characters</small></label>
+          <button type="submit">Initialize server <span aria-hidden="true">↗</span></button>
         </form>
       </section>
 
-      <section id="login-view" class="card hidden compact">
+      <section id="login-view" class="card auth-card hidden compact">
+        <p class="panel-index">01 / Access</p>
         <p class="step">Administration</p>
         <h2>Sign in</h2>
+        <p class="lede">Use the administrator credentials shown in Umbrel's app details.</p>
         <form id="login-form" class="form-stack">
-          <label>Username<input name="username" autocomplete="username" required></label>
-          <label>Password<input name="password" type="password" autocomplete="current-password" required></label>
-          <button type="submit">Sign in</button>
+          <label><span>Username</span><input name="username" autocomplete="username" placeholder="admin" required></label>
+          <label><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label>
+          <button type="submit">Sign in <span aria-hidden="true">→</span></button>
         </form>
       </section>
 
       <section id="dashboard-view" class="hidden">
         <div class="grid metrics">
-          <article class="card metric"><span>Sync engine</span><strong id="sync-state">Unknown</strong></article>
-          <article class="card metric"><span>Accounts</span><strong id="user-count">0</strong></article>
-          <article class="card metric"><span>Sync storage</span><strong id="sync-storage">0 B</strong></article>
-          <article class="card metric"><span>Requests</span><strong id="request-count">0</strong></article>
+          <article class="card metric"><small>01</small><span>Sync engine</span><strong id="sync-state">Unknown</strong></article>
+          <article class="card metric"><small>02</small><span>Accounts</span><strong id="user-count">0</strong></article>
+          <article class="card metric"><small>03</small><span>Sync storage</span><strong id="sync-storage">0 B</strong></article>
+          <article class="card metric"><small>04</small><span>Requests</span><strong id="request-count">0</strong></article>
         </div>
 
         <div class="grid workspace">
           <section class="card">
+            <p class="panel-index">02 / Synchronization</p>
             <div class="section-heading">
               <div><p class="step">Anki clients</p><h2>Sync accounts</h2></div>
-              <button id="refresh-button" class="secondary" type="button">Refresh</button>
+              <button id="refresh-button" class="secondary" type="button">Refresh <span aria-hidden="true">↻</span></button>
             </div>
             <p class="muted">Use this server address in Anki:</p>
-            <div class="copy-row"><code id="server-url"></code><button id="copy-url" class="secondary" type="button">Copy</button></div>
+            <div class="copy-row"><code id="server-url"></code><button id="copy-url" class="secondary" type="button">Copy <span aria-hidden="true">□</span></button></div>
             <div id="users" class="user-list"></div>
           </section>
 
           <aside class="card">
+            <p class="panel-index">03 / Provision</p>
             <p class="step">New account</p>
             <h2>Add a sync user</h2>
             <form id="sync-user-form" class="form-stack">
-              <label>Sync username<input name="username" placeholder="name@example.com" required></label>
-              <label>Sync password<input name="password" type="password" minlength="12" autocomplete="new-password" required></label>
-              <button type="submit">Create account</button>
+              <label><span>Sync username</span><input name="username" placeholder="name@example.com" required></label>
+              <label><span>Sync password</span><input name="password" type="password" minlength="12" autocomplete="new-password" required><small>Minimum 12 characters</small></label>
+              <button type="submit">Create account <span aria-hidden="true">＋</span></button>
             </form>
             <hr>
             <p class="safety"><strong>Network safety</strong><br>This service is intended for your local network or Tailscale. Do not expose plain HTTP directly to the internet.</p>
@@ -73,21 +84,25 @@
         </div>
 
         <section class="card mcp-card">
+          <p class="panel-index">04 / Automation</p>
           <div>
             <p class="step">AI access</p>
             <h2>MCP tokens</h2>
             <p>Create a scoped token for one sync account. The full token is shown once.</p>
           </div>
           <form id="mcp-token-form" class="token-form">
-            <label>Sync account<select id="token-user" name="sync_user_id" required></select></label>
-            <label>Token name<input name="name" placeholder="My local agent" required></label>
+            <label><span>Sync account</span><select id="token-user" name="sync_user_id" required></select></label>
+            <label><span>Token name</span><input name="name" placeholder="My local agent" required></label>
             <label class="check"><input name="write" type="checkbox" checked> Allow writes</label>
-            <button type="submit">Create token</button>
+            <button type="submit">Create token <span aria-hidden="true">＋</span></button>
           </form>
           <div id="token-result" class="token-result hidden"></div>
           <div id="tokens" class="user-list"></div>
         </section>
-        <button id="logout-button" class="text-button" type="button">Sign out</button>
+        <div class="dashboard-footer">
+          <span>Local-first / Umbrel-ready / MCP-enabled</span>
+          <button id="logout-button" class="text-button" type="button">Sign out <span aria-hidden="true">→</span></button>
+        </div>
       </section>
 
       <p id="message" role="status" aria-live="polite"></p>
