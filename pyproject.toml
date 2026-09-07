@@ -1,0 +1,43 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "anki-sync-hub"
+version = "0.1.0.dev0"
+description = "Browser and MCP control plane for Anki's official sync server"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "AGPL-3.0-or-later"
+license-files = ["LICENSE"]
+dependencies = [
+  "anki==26.8.1",
+  "fastapi>=0.115,<1",
+  "httpx>=0.28,<1",
+  "mcp>=2,<3",
+  "uvicorn[standard]>=0.34,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3,<9",
+  "pytest-asyncio>=0.25,<1",
+  "ruff>=0.11,<1",
+]
+
+[project.scripts]
+anki-sync-hub = "anki_sync_hub.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/anki_sync_hub"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

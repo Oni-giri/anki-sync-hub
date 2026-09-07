@@ -1,0 +1,50 @@
+services:
+  web:
+    build:
+      context: .
+    image: anki-sync-hub:dev
+    command: web
+    restart: unless-stopped
+    init: true
+    ports:
+      - "8080:8080"
+    environment:
+      ANKI_HUB_DATA_DIR: /data
+      ANKI_HUB_SYNC_URL: http://sync:8081
+      ANKI_HUB_MCP_URL: http://mcp:8082
+    volumes:
+      - ./data:/data
+    depends_on:
+      - sync
+      - mcp
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  sync:
+    image: anki-sync-hub:dev
+    command: sync-supervisor
+    restart: unless-stopped
+    init: true
+    environment:
+      ANKI_HUB_DATA_DIR: /data
+      ANKI_HUB_SYNC_PORT: "8081"
+    volumes:
+      - ./data:/data
+
+  mcp:
+    image: anki-sync-hub:dev
+    command: mcp
+    restart: unless-stopped
+    init: true
+    environment:
+      ANKI_HUB_DATA_DIR: /data
+      ANKI_HUB_SYNC_URL: http://sync:8081
+      ANKI_HUB_MCP_PORT: "8082"
+    volumes:
+      - ./data:/data
+    depends_on:
+      - sync
