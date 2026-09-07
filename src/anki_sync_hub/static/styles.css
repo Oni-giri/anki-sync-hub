@@ -414,9 +414,12 @@ button.text-button {
 
 .copy-row code {
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
   color: var(--text-primary);
   font-family: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
   font-size: 0.8125rem;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -594,17 +597,17 @@ hr {
     justify-items: start;
   }
 
-  .metrics,
   .token-form {
     grid-template-columns: 1fr;
   }
 
   .metric {
-    min-height: 128px;
+    min-height: 120px;
+    padding: 18px;
   }
 
   .metric small {
-    margin-bottom: 24px;
+    margin-bottom: 20px;
   }
 
   .card,
@@ -617,7 +620,7 @@ hr {
   }
 
   .panel-index {
-    margin-bottom: 40px;
+    margin-bottom: 32px;
   }
 
   .section-heading,
@@ -625,9 +628,42 @@ hr {
     flex-direction: column;
   }
 
+  .section-heading {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .section-heading > div {
+    width: 100%;
+  }
+
   .section-heading button,
   .dashboard-footer button {
     align-self: stretch;
+  }
+
+  .copy-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .copy-row button {
+    min-width: 84px;
+  }
+}
+
+@media (max-width: 380px) {
+  .metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .copy-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .copy-row code {
+    padding: 8px 0;
   }
 }
 
