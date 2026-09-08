@@ -96,8 +96,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.middleware("http")
     async def security_headers(request: Request, call_next):
-        if request.method not in {"GET", "HEAD", "OPTIONS"} and request.url.path.startswith(
-            "/api/"
+        client_api = request.url.path == "/api/v1" or request.url.path.startswith("/api/v1/")
+        if (
+            request.method not in {"GET", "HEAD", "OPTIONS"}
+            and request.url.path.startswith("/api/")
+            and not client_api
         ):
             origin = request.headers.get("origin")
             host = request.headers.get("host")
@@ -264,6 +267,32 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         if not database.revoke_mcp_token(token_id):
             raise HTTPException(status_code=404, detail="Active MCP token not found.")
         return {"status": "revoked"}
+
+    async def forward_rest_api(path: str, request: Request):
+        return await proxy_sync_request(
+            request,
+            "api/v1",
+            path,
+            app.state.http,
+            database,
+            settings.mcp_internal_url,
+        )
+
+    @app.api_route(
+        "/api/v1",
+        methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        include_in_schema=False,
+    )
+    async def rest_api_proxy_root(request: Request):
+        return await forward_rest_api("", request)
+
+    @app.api_route(
+        "/api/v1/{path:path}",
+        methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        include_in_schema=False,
+    )
+    async def rest_api_proxy(path: str, request: Request):
+        return await forward_rest_api(path, request)
 
     async def forward_sync(namespace: str, path: str, request: Request):
         return await proxy_sync_request(

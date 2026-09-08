@@ -90,8 +90,8 @@
           <div class="section-heading mcp-heading">
             <div>
               <p class="step">AI access</p>
-              <h2>MCP tokens</h2>
-              <p>Create a scoped token for one sync account. The full token is shown once.</p>
+              <h2>API &amp; MCP tokens</h2>
+              <p>Create one scoped token for a REST client or AI agent. The full token is shown once.</p>
             </div>
           </div>
           <form id="mcp-token-form" class="token-form">
@@ -107,7 +107,7 @@
           <div id="tokens" class="user-list"></div>
         </section>
         <div class="dashboard-footer">
-          <span>Local-first / Umbrel-ready / MCP-enabled</span>
+          <span>Local-first / Umbrel-ready / API + MCP</span>
           <button id="logout-button" class="text-button" type="button">Sign out <span aria-hidden="true">→</span></button>
         </div>
       </section>
@@ -119,8 +119,8 @@
       <div class="drawer-shell">
         <header class="drawer-header">
           <div>
-            <p class="panel-index">MCP / Connection</p>
-            <h2 id="mcp-guide-title">Connect an AI agent</h2>
+            <p class="panel-index">API + MCP / Connection</p>
+            <h2 id="mcp-guide-title">Connect a client</h2>
           </div>
           <button id="close-mcp-guide" class="secondary" type="button" aria-label="Close connection guide">Close <span aria-hidden="true">×</span></button>
         </header>
@@ -128,8 +128,8 @@
 
         <ol class="guide-steps">
           <li><strong>Create a sync account</strong><span>The agent works on the collection belonging to the selected sync account.</span></li>
-          <li><strong>Create an MCP token</strong><span>Select the account, name the agent, choose write access, and copy the token when it appears.</span></li>
-          <li><strong>Add a custom MCP server</strong><span>In your AI client, choose Streamable HTTP and enter the endpoint and authorization header below.</span></li>
+          <li><strong>Create an access token</strong><span>Select the account, name the client, choose write access, and copy the token when it appears.</span></li>
+          <li><strong>Choose REST or MCP</strong><span>Use the REST API from scripts and apps, or add the Streamable HTTP endpoint to an MCP-compatible AI client.</span></li>
         </ol>
 
         <section class="connection-section" aria-labelledby="connection-details-title">
@@ -139,6 +139,23 @@
           <p class="connection-label">Authorization header</p>
           <div class="copy-row drawer-copy-row"><code id="mcp-auth-header">Bearer YOUR_TOKEN</code><button id="copy-mcp-header" class="secondary" type="button" aria-label="Copy authorization header">Copy <span aria-hidden="true">□</span></button></div>
           <p class="drawer-note">Header name: <code>Authorization</code>. Header value: the text above. Keep the <code>Bearer</code> prefix and replace <code>YOUR_TOKEN</code>.</p>
+        </section>
+
+        <section class="connection-section" aria-labelledby="rest-api-title">
+          <div class="config-heading">
+            <div><p class="step">REST API</p><h3 id="rest-api-title">Scripts and applications</h3></div>
+            <button id="copy-api-example" class="secondary" type="button">Copy cURL <span aria-hidden="true">□</span></button>
+          </div>
+          <p class="connection-label">Base URL</p>
+          <div class="copy-row drawer-copy-row"><code id="api-endpoint"></code><button id="copy-api-endpoint" class="secondary" type="button" aria-label="Copy REST API endpoint">Copy <span aria-hidden="true">□</span></button></div>
+          <div class="tool-grid">
+            <code>GET /decks</code><span>List available decks</span>
+            <code>POST /decks</code><span>Create or resolve a deck</span>
+            <code>GET /notes</code><span>Search notes with an Anki query</span>
+            <code>POST /notes</code><span>Add a note and its cards</span>
+          </div>
+          <pre class="config-block api-example"><code id="api-example"></code></pre>
+          <p class="drawer-note">Send the same <code>Authorization: Bearer …</code> header with every request. Write endpoints require <strong>Allow writes</strong>.</p>
         </section>
 
         <section class="connection-section" aria-labelledby="common-config-title">
@@ -151,7 +168,7 @@
         </section>
 
         <section class="connection-section" aria-labelledby="mcp-tools-title">
-          <p class="step">Available tools</p>
+          <p class="step">MCP tools</p>
           <h3 id="mcp-tools-title">Deck operations</h3>
           <div class="tool-grid">
             <code>list_decks</code><span>View available decks</span>

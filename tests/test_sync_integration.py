@@ -141,6 +141,22 @@ def test_automation_client_mutates_through_sync_protocol(tmp_path: Path) -> None
             verifier.close()
 
 
+def test_automation_client_bootstraps_from_empty_server(tmp_path: Path) -> None:
+    with _sync_server(tmp_path) as (port, _password, password_hash):
+        endpoint = f"http://127.0.0.1:{port}/"
+        database = Database(tmp_path / "control" / "control.db")
+        database.migrate()
+        host_key = derive_sync_host_key("alice", password_hash)
+        user = database.create_sync_user("alice", password_hash, host_key)
+        principal = MCPPrincipal(1, user.id, user.username, host_key, frozenset({"read", "write"}))
+        automation = AutomationClient(tmp_path / "automation", endpoint, database)
+
+        assert "Default" in {deck["name"] for deck in automation.list_decks(principal)}
+        assert automation.create_deck(principal, "Created through API")["name"] == (
+            "Created through API"
+        )
+
+
 def test_supervisor_reloads_password_without_container_restart(tmp_path: Path) -> None:
     port = _available_port()
     data_dir = tmp_path / "hub"

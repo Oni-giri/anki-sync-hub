@@ -33,3 +33,14 @@ class MCPTokenCreate(BaseModel):
     scopes: set[Literal["read", "write", "destructive"]] = Field(
         default_factory=lambda: {"read", "write"}
     )
+
+
+class DeckCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=250)
+
+
+class NoteCreate(BaseModel):
+    deck: str = Field(min_length=1, max_length=250)
+    fields: dict[str, str] = Field(min_length=1, max_length=100)
+    note_type: str = Field(default="Basic", min_length=1, max_length=250)
+    tags: list[str] = Field(default_factory=list, max_length=100)

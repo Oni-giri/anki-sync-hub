@@ -13,13 +13,15 @@ The project is under active development. The first milestone provides:
 - a same-origin gateway for `/sync/*` and `/msync/*`;
 - basic health, storage, and request metrics;
 - persistent configuration and collection storage;
+- a bearer-token REST API for scripts and applications;
 - an MCP endpoint whose deck operations use a separate headless Anki client.
 
 No user-specific values are built into the image. On Umbrel, the platform's
 generated app password provisions the `admin` owner on first start and appears
 in Umbrel's standard credentials dialog. Portable Docker installs retain the
 browser-based owner setup. Sync credentials and MCP tokens are managed in the
-browser and stored in the mounted data directory.
+browser and stored in the mounted data directory. The same scoped token works
+with both the REST API and MCP.
 
 ## Development status
 
@@ -27,9 +29,9 @@ See [docs/EXECUTION_PLAN.md](docs/EXECUTION_PLAN.md) for the staged execution
 plan and acceptance criteria.
 
 The current vertical slice includes owner onboarding, sync-account management,
-live credential reload, a streaming sync gateway, request/storage metrics, MCP
-token management, and the first four MCP tools: `list_decks`, `create_deck`,
-`search_notes`, and `create_note`.
+live credential reload, a streaming sync gateway, request/storage metrics,
+access-token management, REST endpoints, and the first four MCP tools:
+`list_decks`, `create_deck`, `search_notes`, and `create_note`.
 
 ## Local development
 
@@ -61,6 +63,21 @@ For MCP, create a token in the UI and connect a Streamable HTTP client to
 Authorization: Bearer ash_your_token
 ```
 
+The same token can call the REST API at `http://localhost:8080/api/v1`:
+
+```bash
+curl http://localhost:8080/api/v1/decks \
+  -H 'Authorization: Bearer ash_your_token'
+```
+
+Available endpoints:
+
+- `GET /api/v1/decks`
+- `POST /api/v1/decks` with `{"name":"Languages"}`
+- `GET /api/v1/notes?query=deck:Languages&limit=50`
+- `POST /api/v1/notes` with a deck, fields, optional note type, and tags
+- `GET /api/v1/openapi.json` for the machine-readable OpenAPI schema
+
 Loopback integration tests start a real official sync server and are opt-in:
 
 ```bash
@@ -71,8 +88,8 @@ RUN_NETWORK_TESTS=1 .venv/bin/pytest tests/test_sync_integration.py
 
 The application is intended for LAN or Tailscale access. The browser UI has
 its own authentication and may additionally be protected by Umbrel's app
-proxy. Sync and MCP routes use application-level credentials because Anki and
-MCP clients cannot supply an Umbrel browser session.
+proxy. Sync, REST API, and MCP routes use application-level credentials because
+native and programmatic clients cannot supply an Umbrel browser session.
 
 Do not publish the HTTP service directly to the public internet. Put HTTPS,
 Tailscale, or another authenticated private network in front of it.

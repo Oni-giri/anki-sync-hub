@@ -29,9 +29,15 @@ function sayMcpGuide(text = "", tone = "success") {
 
 function updateMcpGuide() {
   const endpoint = `${window.location.origin}/mcp`;
+  const apiEndpoint = `${window.location.origin}/api/v1`;
   const authorization = `Bearer ${latestMcpToken}`;
   document.querySelector("#mcp-endpoint").textContent = endpoint;
+  document.querySelector("#api-endpoint").textContent = apiEndpoint;
   document.querySelector("#mcp-auth-header").textContent = authorization;
+  document.querySelector("#api-example").textContent = [
+    `curl ${apiEndpoint}/decks \\`,
+    `  -H 'Authorization: ${authorization}'`,
+  ].join("\n");
   document.querySelector("#mcp-config").textContent = JSON.stringify({
     mcpServers: {
       "anki-sync-hub": {
@@ -139,7 +145,7 @@ function renderUsers(users) {
 function renderTokens(tokens) {
   const list = document.querySelector("#tokens");
   if (!tokens.length) {
-    list.innerHTML = '<p class="muted">No MCP tokens have been created.</p>';
+    list.innerHTML = '<p class="muted">No access tokens have been created.</p>';
     return;
   }
   list.replaceChildren(...tokens.map((token) => {
@@ -257,7 +263,7 @@ mcpTokenForm.addEventListener("submit", async (event) => {
   mcpTokenForm.dataset.submitting = "true";
   const submit = mcpTokenForm.querySelector('button[type="submit"]');
   submit.disabled = true;
-  say("Creating MCP token…");
+  say("Creating access token…");
   const form = new FormData(tokenForm);
   const scopes = ["read"];
   if (form.get("write")) scopes.push("write");
@@ -332,6 +338,18 @@ document.querySelector("#copy-mcp-config").addEventListener("click", async () =>
   try {
     await copyText(document.querySelector("#mcp-config").textContent);
     sayMcpGuide("Connection JSON copied.");
+  } catch (error) { sayMcpGuide(error.message, "error"); }
+});
+document.querySelector("#copy-api-endpoint").addEventListener("click", async () => {
+  try {
+    await copyText(document.querySelector("#api-endpoint").textContent);
+    sayMcpGuide("REST API endpoint copied.");
+  } catch (error) { sayMcpGuide(error.message, "error"); }
+});
+document.querySelector("#copy-api-example").addEventListener("click", async () => {
+  try {
+    await copyText(document.querySelector("#api-example").textContent);
+    sayMcpGuide("cURL example copied.");
   } catch (error) { sayMcpGuide(error.message, "error"); }
 });
 mcpGuide.addEventListener("click", (event) => {

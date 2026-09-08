@@ -118,17 +118,27 @@ class AutomationClient:
             user_dir = self.data_dir / str(principal.sync_user_id)
             user_dir.mkdir(parents=True, exist_ok=True)
             collection_path = user_dir / "collection.anki2"
+            initial_replica = not collection_path.exists()
             collection = Collection(str(collection_path))
             auth = SyncAuth(hkey=principal.host_key, endpoint=self.sync_endpoint)
             try:
-                collection = self._synchronize(collection, collection_path, auth)
+                collection = self._synchronize(
+                    collection,
+                    collection_path,
+                    auth,
+                    allow_initial_download=initial_replica,
+                )
                 result = operation(collection)
                 if mutate:
-                    collection.save()
-                    collection = self._synchronize(collection, collection_path, auth)
+                    collection = self._synchronize(
+                        collection,
+                        collection_path,
+                        auth,
+                        allow_mutation_upload=True,
+                    )
                     self.database.add_audit_log(
                         principal.sync_user_id,
-                        f"mcp-token:{principal.token_id}",
+                        f"access-token:{principal.token_id}",
                         action,
                         json.dumps({"result": result}, separators=(",", ":"), default=str),
                     )
@@ -137,7 +147,14 @@ class AutomationClient:
                 collection.close()
 
     @staticmethod
-    def _synchronize(collection: Collection, collection_path: Path, auth: SyncAuth) -> Collection:
+    def _synchronize(
+        collection: Collection,
+        collection_path: Path,
+        auth: SyncAuth,
+        *,
+        allow_initial_download: bool = False,
+        allow_mutation_upload: bool = False,
+    ) -> Collection:
         output = collection.sync_collection(auth, sync_media=False)
         if output.required in {
             sync_pb2.SyncCollectionResponse.NO_CHANGES,
@@ -151,6 +168,17 @@ class AutomationClient:
             collection.close()
             return Collection(str(collection_path))
         if output.required == sync_pb2.SyncCollectionResponse.FULL_UPLOAD:
+            collection.full_upload_or_download(
+                auth=auth, server_usn=output.server_media_usn, upload=True
+            )
+            return collection
+        if output.required == sync_pb2.SyncCollectionResponse.FULL_SYNC and allow_initial_download:
+            collection.full_upload_or_download(
+                auth=auth, server_usn=output.server_media_usn, upload=False
+            )
+            collection.close()
+            return Collection(str(collection_path))
+        if output.required == sync_pb2.SyncCollectionResponse.FULL_SYNC and allow_mutation_upload:
             collection.full_upload_or_download(
                 auth=auth, server_usn=output.server_media_usn, upload=True
             )

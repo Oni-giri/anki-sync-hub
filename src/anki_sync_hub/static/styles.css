@@ -745,6 +745,10 @@ button.text-button {
   line-height: 1.55;
 }
 
+.api-example {
+  margin-top: 16px;
+}
+
 .tool-grid {
   display: grid;
   grid-template-columns: minmax(110px, auto) minmax(0, 1fr);

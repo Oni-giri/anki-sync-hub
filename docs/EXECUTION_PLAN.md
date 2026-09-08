@@ -77,6 +77,7 @@ Acceptance:
 ## Milestone 3: MCP and automation client
 
 - Mount a Streamable HTTP MCP server at `/mcp`.
+- Expose a versioned REST API at `/api/v1` using the same scoped access tokens.
 - Add per-user, hashed API tokens with `read`, `write`, and `destructive`
   scopes.
 - Maintain a separate local automation collection and host key per sync user.
